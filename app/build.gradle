@@ -127,8 +127,12 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
     implementation 'com.jackandphantom.android:circularimageview:1.2.0'
+
     //interceptor
     implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2")
+
+    //Lottie for animation
+    implementation "com.airbnb.android:lottie:4.0.0"
 
     // Easy Permissions
     implementation 'pub.devrel:easypermissions:3.0.0'
