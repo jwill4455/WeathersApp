@@ -36,6 +36,7 @@ class HomeFragment : Fragment(), AdapterCity.CityListener {
     private var cityName = ""
     private var adapterCity: AdapterCity? = null
     private var isGetWeatherHere = true
+    private var isClickChooseCity = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,6 +46,7 @@ class HomeFragment : Fragment(), AdapterCity.CityListener {
 
     private val mLocationListener: LocationListener =
         LocationListener { p0 ->
+            isGetWeatherHere = true
             val latitude = p0.latitude
             val longitude = p0.longitude
             weatherViewModel.getWeatherHere(latitude, longitude)
@@ -66,7 +68,16 @@ class HomeFragment : Fragment(), AdapterCity.CityListener {
         }
         requestLocationPermission()
         button?.setOnClickListener {
-            weatherViewModel.insertCity(CityEntity(id = 1, name = "Test", key = "asdfasdf"))
+            isGetWeatherHere = false
+            isClickChooseCity = false
+            if (cityList.size == 5) {
+                weatherViewModel.deleteCity(cityList[4])
+            }
+            cityName = editText?.text?.toString() ?: ""
+            if (cityName.isNotEmpty()) {
+                weatherViewModel.getWeatherOfCityByName(cityName = cityName)
+            }
+            rcvCity?.visibility = View.GONE
         }
 
         editText?.addTextChangedListener(object: TextWatcher {
@@ -87,7 +98,11 @@ class HomeFragment : Fragment(), AdapterCity.CityListener {
         })
 
         weatherViewModel.weatherLiveData.observe(viewLifecycleOwner, Observer{
-
+            val weather = it.first
+            val key = it.second
+            if (!isClickChooseCity) {
+                weatherViewModel.insertCity(CityEntity(name = cityName, key = key))
+            }
         })
 
         weatherViewModel.getAllCity().observe(viewLifecycleOwner, { list ->
@@ -145,6 +160,8 @@ class HomeFragment : Fragment(), AdapterCity.CityListener {
     }
 
     override fun onCityClicked(city: CityEntity) {
+        isClickChooseCity = true
+        isGetWeatherHere = false
         rcvCity?.visibility = View.GONE
         weatherViewModel.getWeatherCityByKey(key = city.key)
     }
