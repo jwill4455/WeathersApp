@@ -6,6 +6,8 @@ import android.content.pm.PackageManager
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -67,10 +69,23 @@ class HomeFragment : Fragment(), AdapterCity.CityListener {
             weatherViewModel.insertCity(CityEntity(id = 1, name = "Test", key = "asdfasdf"))
         }
 
-        editText?.addTextChangedListener {
-           weatherViewModel.getAllCity()
+        editText?.addTextChangedListener(object: TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
-        }
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                if (rcvCity.visibility == View.GONE) {
+                    rcvCity.visibility = View.VISIBLE
+                }
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+
+            }
+
+        })
+
         weatherViewModel.weatherLiveData.observe(viewLifecycleOwner, Observer{
 
         })
