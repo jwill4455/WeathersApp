@@ -20,7 +20,7 @@ class WeatherViewModel @Inject constructor(private val weatherRepository: Weathe
     ViewModel() {
     private val viewModelJob = Job()
     private val coroutineContext = CoroutineScope(Dispatchers.Main + viewModelJob)
-    val weatherLiveData = MutableLiveData<DailyForecast>()
+    val weatherLiveData = MutableLiveData<Pair<DailyForecast, String>>()
 
 
     fun getWeatherHere(latitude: Double, longitude: Double) {
@@ -31,13 +31,37 @@ class WeatherViewModel @Inject constructor(private val weatherRepository: Weathe
                     val key = it.key
                     val weather = weatherRepository.getWeatherByKey(key = key)
                     weather?.let { weather ->
-                        weatherLiveData.value = weather
+                        //weatherLiveData.value = weather
+                        Log.e("TAG", "weather $weather")
                     }
                 }
-                Log.e("TAG", "response $response")
             }
 
         } catch (ex: Exception) {
+        }
+    }
+
+    fun getWeatherCityByKey(key: String) {
+        try {
+            coroutineContext.launch {
+                val weather = weatherRepository.getWeatherByKey(key = key)
+                weather?.let { weather ->
+                    weatherLiveData.value = weather to key
+                    Log.e("TAG", "Weather $weather")
+                }
+            }
+        } catch (ex: Exception) {
+
+        }
+    }
+
+    fun deleteCity(cityEntity: CityEntity) {
+        try {
+            coroutineContext.launch {
+                weatherRepository.deleteCity(cityEntity)
+            }
+        } catch (ex: Exception) {
+            Log.e("tag", "delete failure ${ex.toString()}")
         }
     }
 
@@ -50,11 +74,10 @@ class WeatherViewModel @Inject constructor(private val weatherRepository: Weathe
                         val key = city.key
                         val weather = weatherRepository.getWeatherByKey(key = key)
                         weather?.let { weather ->
-                            weatherLiveData.value = weather
+                            weatherLiveData.value = weather to key
                         }
                     }
                 }
-                Log.e("TAG", "response $response")
             }
 
         } catch (ex: Exception) {
@@ -67,8 +90,10 @@ class WeatherViewModel @Inject constructor(private val weatherRepository: Weathe
                weatherRepository.insertCity(cityEntity)
             }
         } catch (ex: Exception) {
+            Log.e("tag", "insert failure ${ex.toString()}")
         }
     }
 
     fun getAllCity() = weatherRepository.getAllCityRecent()
+
 }
