@@ -75,9 +75,12 @@ class HomeFragment : Fragment(), AdapterCity.CityListener {
 
         })
 
-        weatherViewModel.cityLiveData.observe(viewLifecycleOwner, { list ->
-            Log.e("tag", "list ${list?.toString()} ${list?.size}")
+        weatherViewModel.getAllCity().observe(viewLifecycleOwner, { list ->
+            cityList.clear()
+            cityList.addAll(list.toMutableList().reversed())
+            adapterCity?.setList(cityList)
         })
+
     }
 
     private fun setupRcv() {
