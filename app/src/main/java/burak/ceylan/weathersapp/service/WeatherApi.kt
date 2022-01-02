@@ -21,7 +21,7 @@ interface WeatherApi {
     suspend fun getLocationOfCityByName(@QueryMap param: HashMap<String, String>): Response<CitySearch>
 
     @GET("forecasts/v1/daily/1day/{key}")
-    suspend fun getWeatherByKey(@Path("key") id: String): Response<DailyForecast>
+    suspend fun getWeatherByKey(@Path("key") id: String, @QueryMap param: HashMap<String, String>): Response<DailyForecast>
 
 
 }
