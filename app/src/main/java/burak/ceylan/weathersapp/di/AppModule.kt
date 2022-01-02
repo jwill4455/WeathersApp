@@ -1,6 +1,9 @@
 package burak.ceylan.weathersapp.di
 
 import android.app.Application
+import burak.ceylan.weathersapp.database.CityDatabase
+import burak.ceylan.weathersapp.service.WeatherApi
+import burak.ceylan.weathersapp.service.WeatherApi.Companion.BASE_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,16 +33,21 @@ class AppModule {
 
     @Provides
     @Singleton
+    fun getGithubDatabase(app:Application): CityDatabase{
+        return CityDatabase.getGithubDBInstance(app)
+    }
+
+    @Provides
+    @Singleton
     fun provideRetrofit(): Retrofit = Retrofit.Builder()
-        .baseUrl("http://dataservice.accuweather.com/")
+        .baseUrl(BASE_URL)
         .client(okHttp())
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
     @Provides
     @Singleton
-    fun provideApi(): GithubAPI =
-        provideRetrofit().create(GithubAPI::class.java)
-
+    fun provideApi(): WeatherApi =
+        provideRetrofit().create(WeatherApi::class.java)
 
 }
