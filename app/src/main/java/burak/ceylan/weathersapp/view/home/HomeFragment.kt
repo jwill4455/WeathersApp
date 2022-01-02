@@ -20,6 +20,8 @@ import androidx.lifecycle.Observer
 import burak.ceylan.weathersapp.R
 import burak.ceylan.weathersapp.adapter.AdapterCity
 import burak.ceylan.weathersapp.database.entity.CityEntity
+import burak.ceylan.weathersapp.model.dailyforecast.DailyForecast
+import burak.ceylan.weathersapp.model.dailyforecast.Temperature
 import burak.ceylan.weathersapp.view.MainActivity
 import burak.ceylan.weathersapp.viewmodel.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -103,6 +105,13 @@ class HomeFragment : Fragment(), AdapterCity.CityListener {
             if (!isClickChooseCity) {
                 weatherViewModel.insertCity(CityEntity(name = cityName, key = key))
             }
+            if (!isGetWeatherHere) {
+                val navController = Navigation.findNavController(requireActivity(), R.id.fragment)
+                navController.navigateUp()
+                val bundle = Bundle()
+                bundle.putParcelableArrayList(KEY, getListTemperature(weather))
+                navController.navigate(R.id.detailFragment, bundle)
+            }
         })
 
         weatherViewModel.getAllCity().observe(viewLifecycleOwner, { list ->
@@ -111,6 +120,19 @@ class HomeFragment : Fragment(), AdapterCity.CityListener {
             adapterCity?.setList(cityList)
         })
 
+    }
+
+    private fun getListTemperature(forecast: DailyForecast): ArrayList<Temperature> {
+        val list = arrayListOf<Temperature>()
+        val text = forecast.headline.text
+
+        forecast.dailyForecasts.forEach {
+            val item = it.temperature
+            item.date = it.date
+            item.future = text
+            list.add(item)
+        }
+        return list
     }
 
     private fun setupRcv() {
