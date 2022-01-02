@@ -3,6 +3,7 @@ package burak.ceylan.weathersapp.viewmodel
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import burak.ceylan.weathersapp.database.entity.CityEntity
 import burak.ceylan.weathersapp.model.citysearch.CitySearch
 import burak.ceylan.weathersapp.model.dailyforecast.DailyForecast
 import burak.ceylan.weathersapp.model.mygeolocation.MyGeoLocation
@@ -15,13 +16,14 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class WeatherViewModel @Inject constructor(private val weatherRepository: WeatherRepository): ViewModel() {
+class WeatherViewModel @Inject constructor(private val weatherRepository: WeatherRepository) :
+    ViewModel() {
     private val viewModelJob = Job()
     private val coroutineContext = CoroutineScope(Dispatchers.Main + viewModelJob)
     val weatherLiveData = MutableLiveData<DailyForecast>()
 
 
-    fun getWeatherHere(latitude: Double, longitude: Double){
+    fun getWeatherHere(latitude: Double, longitude: Double) {
         try {
             coroutineContext.launch {
                 val response = weatherRepository.getKeyForCurrentLocation(latitude, longitude)
@@ -35,12 +37,11 @@ class WeatherViewModel @Inject constructor(private val weatherRepository: Weathe
                 Log.e("TAG", "response $response")
             }
 
-        }catch (ex:Exception) {
+        } catch (ex: Exception) {
         }
-
     }
 
-    fun getWeatherOfCityByName(cityName: String){
+    fun getWeatherOfCityByName(cityName: String) {
         try {
             coroutineContext.launch {
                 val response = weatherRepository.getLocationOfCityByName(cityName)
@@ -56,8 +57,18 @@ class WeatherViewModel @Inject constructor(private val weatherRepository: Weathe
                 Log.e("TAG", "response $response")
             }
 
-        }catch (ex:Exception) {
+        } catch (ex: Exception) {
         }
-
     }
+
+    fun insertCity(cityEntity: CityEntity) {
+        try {
+            coroutineContext.launch {
+               weatherRepository.insertCity(cityEntity)
+            }
+        } catch (ex: Exception) {
+        }
+    }
+
+    fun getAllCity() = weatherRepository.getAllCityRecent()
 }
