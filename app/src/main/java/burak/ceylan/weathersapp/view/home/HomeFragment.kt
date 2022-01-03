@@ -17,6 +17,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.Navigation
 import burak.ceylan.weathersapp.R
 import burak.ceylan.weathersapp.adapter.AdapterCity
 import burak.ceylan.weathersapp.database.entity.CityEntity
@@ -40,6 +41,10 @@ class HomeFragment : Fragment(), AdapterCity.CityListener {
     private var isGetWeatherHere = true
     private var isClickChooseCity = false
 
+
+    companion object {
+        const val KEY = "KEY"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,14 +77,15 @@ class HomeFragment : Fragment(), AdapterCity.CityListener {
         button?.setOnClickListener {
             isGetWeatherHere = false
             isClickChooseCity = false
-            if (cityList.size == 5) {
-                weatherViewModel.deleteCity(cityList[4])
+            if (cityList.size >= 5) {
+                for (i in 4 until cityList.size) {
+                    weatherViewModel.deleteCity(cityList[i])
+                }
             }
             cityName = editText?.text?.toString() ?: ""
             if (cityName.isNotEmpty()) {
                 weatherViewModel.getWeatherOfCityByName(cityName = cityName)
             }
-            rcvCity?.visibility = View.GONE
         }
 
         editText?.addTextChangedListener(object: TextWatcher {
@@ -106,6 +112,8 @@ class HomeFragment : Fragment(), AdapterCity.CityListener {
                 weatherViewModel.insertCity(CityEntity(name = cityName, key = key))
             }
             if (!isGetWeatherHere) {
+                isClickChooseCity = true
+                isGetWeatherHere = true
                 val navController = Navigation.findNavController(requireActivity(), R.id.fragment)
                 navController.navigateUp()
                 val bundle = Bundle()
