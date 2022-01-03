@@ -22,12 +22,14 @@ class WeatherViewModel @Inject constructor(private val weatherRepository: Weathe
     private val coroutineContext = CoroutineScope(Dispatchers.Main + viewModelJob)
     val weatherLiveData = MutableLiveData<Pair<DailyForecast, String>>()
     val weatherHereLiveData = MutableLiveData<Pair<DailyForecast, String>>()
+    val nameCityLiveData = MutableLiveData<String>()
 
     fun getWeatherHere(latitude: Double, longitude: Double) {
         try {
             coroutineContext.launch {
                 val response = weatherRepository.getKeyForCurrentLocation(latitude, longitude)
                 response?.let {
+                    nameCityLiveData.value = it.localizedName
                     val key = it.key
                     val weather = weatherRepository.getWeatherByKey(key = key)
                     weather?.let { weather ->
