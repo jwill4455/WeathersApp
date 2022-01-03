@@ -11,6 +11,7 @@ import burak.ceylan.weathersapp.model.dailyforecast.Temperature
 import burak.ceylan.weathersapp.view.home.HomeFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_detail.*
+import kotlinx.android.synthetic.main.fragment_detail.animation_view
 
 
 @AndroidEntryPoint
@@ -36,6 +37,19 @@ class DetailFragment : Fragment() {
             rcvWeather?.apply {
                 adapter = AdapterWeather(list = list)
             }
+        }
+        var toogIdentifier: String = "night"
+        hamster.setOnClickListener {
+            if(toogIdentifier == "night") {
+                hamster.playAnimation()
+                animation_view.setAnimation(R.raw.day_background)
+                toogIdentifier = "day"
+            }else{
+                animation_view.setAnimation(R.raw.night_background)
+                toogIdentifier = "night"
+                hamster.frame = 1
+            }
+            animation_view.playAnimation()
         }
     }
 
