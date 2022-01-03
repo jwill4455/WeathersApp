@@ -26,6 +26,7 @@ import burak.ceylan.weathersapp.model.dailyforecast.Temperature
 import burak.ceylan.weathersapp.util.StringExtension.formatDate
 import burak.ceylan.weathersapp.util.StringExtension.formatHour
 import burak.ceylan.weathersapp.view.MainActivity
+import burak.ceylan.weathersapp.view.home.HomeFragment.Companion.REQUEST_CODE_LOCATION
 import burak.ceylan.weathersapp.viewmodel.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -46,8 +47,8 @@ class HomeFragment : Fragment(), AdapterCity.CityListener {
 
     companion object {
         const val KEY = "KEY"
+        const val REQUEST_CODE_LOCATION = 123
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -193,7 +194,7 @@ class HomeFragment : Fragment(), AdapterCity.CityListener {
         } else {
             EasyPermissions.requestPermissions(
                 this, "We need permissions to get weather",
-                MainActivity.REQUEST_CODE_LOCATION, *perms
+                REQUEST_CODE_LOCATION, *perms
             )
         }
     }
