@@ -22,6 +22,10 @@ class WeatherRepository @Inject constructor(
         cityDao.insertCity(city)
     }
 
+    suspend fun deleteCity(city: CityEntity) {
+        city.id?.let { cityDao.removeCity(it) }
+    }
+
     suspend fun getKeyForCurrentLocation(latitude: Double, longitude: Double): MyGeoLocation? {
         val hashMap = hashMapOf<String, String>()
         hashMap["apikey"] = WeatherApi.API_KEY
@@ -30,7 +34,9 @@ class WeatherRepository @Inject constructor(
     }
 
     suspend fun getWeatherByKey(key: String): DailyForecast? {
-        return weatherApi.getWeatherByKey(id = key).body()
+        val hashMap = hashMapOf<String, String>()
+        hashMap["apikey"] = WeatherApi.API_KEY
+        return weatherApi.getWeatherByKey(id = key, param = hashMap).body()
     }
 
     suspend fun getLocationOfCityByName(cityName: String): CitySearch? {
