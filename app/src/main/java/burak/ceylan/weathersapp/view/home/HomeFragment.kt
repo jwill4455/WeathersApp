@@ -23,6 +23,8 @@ import burak.ceylan.weathersapp.adapter.AdapterCity
 import burak.ceylan.weathersapp.database.entity.CityEntity
 import burak.ceylan.weathersapp.model.dailyforecast.DailyForecast
 import burak.ceylan.weathersapp.model.dailyforecast.Temperature
+import burak.ceylan.weathersapp.util.StringExtension.formatDate
+import burak.ceylan.weathersapp.util.StringExtension.formatHour
 import burak.ceylan.weathersapp.view.MainActivity
 import burak.ceylan.weathersapp.viewmodel.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -126,6 +128,22 @@ class HomeFragment : Fragment(), AdapterCity.CityListener {
             cityList.clear()
             cityList.addAll(list.toMutableList().reversed())
             adapterCity?.setList(cityList)
+        })
+
+        weatherViewModel.weatherHereLiveData.observe(viewLifecycleOwner, {
+            val forecast = it.first
+            val weatherCurrent = forecast.dailyForecasts.firstOrNull()
+            txtDateCurrent?.text = weatherCurrent?.date?.formatDate()
+            txtTimeCurrent?.text = weatherCurrent?.date?.formatHour()
+            txtMaxTempCurrent?.text =
+                "${weatherCurrent?.temperature?.maximum?.value} ${weatherCurrent?.temperature?.maximum?.unit}"
+            txtMinTempCurrent?.text =
+                "${weatherCurrent?.temperature?.minimum?.value?.toString()} ${weatherCurrent?.temperature?.minimum?.unit}"
+            txtFutureCurrent?.text = forecast.headline.text
+        })
+
+        weatherViewModel.nameCityLiveData.observe(viewLifecycleOwner, {
+            txtNameOfCurrentCity?.text = it
         })
 
     }
