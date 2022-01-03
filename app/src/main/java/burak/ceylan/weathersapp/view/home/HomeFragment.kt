@@ -28,6 +28,7 @@ import burak.ceylan.weathersapp.util.StringExtension.formatHour
 import burak.ceylan.weathersapp.view.MainActivity
 import burak.ceylan.weathersapp.view.home.HomeFragment.Companion.REQUEST_CODE_LOCATION
 import burak.ceylan.weathersapp.viewmodel.WeatherViewModel
+import com.airbnb.lottie.LottieAnimationView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_home.*
 import pub.devrel.easypermissions.AfterPermissionGranted
@@ -73,10 +74,23 @@ class HomeFragment : Fragment(), AdapterCity.CityListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRcv()
-        activity?.let { it ->
+        activity?.let { _ ->
             mLocationManager = activity?.getSystemService(LOCATION_SERVICE) as LocationManager
         }
         requestLocationPermission()
+        var toogIdentifier: String = "night"
+        hamster.setOnClickListener {
+            if(toogIdentifier == "night") {
+                hamster.playAnimation()
+                animation_view.setAnimation(R.raw.day_background)
+                toogIdentifier = "day"
+            }else{
+                animation_view.setAnimation(R.raw.night_background)
+                toogIdentifier = "night"
+                hamster.frame = 1
+            }
+            animation_view.playAnimation()
+        }
         button?.setOnClickListener {
             isGetWeatherHere = false
             isClickChooseCity = false
@@ -176,7 +190,7 @@ class HomeFragment : Fragment(), AdapterCity.CityListener {
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             )
-        if (EasyPermissions.hasPermissions(requireContext()!!, *perms)) {
+        if (EasyPermissions.hasPermissions(requireContext(), *perms)) {
             if (ActivityCompat.checkSelfPermission(
                     requireContext(),
                     Manifest.permission.ACCESS_FINE_LOCATION
