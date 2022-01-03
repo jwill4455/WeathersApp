@@ -21,7 +21,7 @@ class WeatherViewModel @Inject constructor(private val weatherRepository: Weathe
     private val viewModelJob = Job()
     private val coroutineContext = CoroutineScope(Dispatchers.Main + viewModelJob)
     val weatherLiveData = MutableLiveData<Pair<DailyForecast, String>>()
-
+    val weatherHereLiveData = MutableLiveData<Pair<DailyForecast, String>>()
 
     fun getWeatherHere(latitude: Double, longitude: Double) {
         try {
@@ -31,7 +31,7 @@ class WeatherViewModel @Inject constructor(private val weatherRepository: Weathe
                     val key = it.key
                     val weather = weatherRepository.getWeatherByKey(key = key)
                     weather?.let { weather ->
-                        //weatherLiveData.value = weather
+                        weatherHereLiveData.value = weather to key
                         Log.e("TAG", "weather $weather")
                     }
                 }
