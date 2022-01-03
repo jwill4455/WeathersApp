@@ -11,7 +11,7 @@ interface WeatherApi {
 
     companion object {
         const val BASE_URL = "https://dataservice.accuweather.com/"
-        const val API_KEY = "qfuYpQiWEEajMkBYZRHu137gbcmctiOT"
+        const val API_KEY = "CujB7TWzRgIqvsa5JPWxGtwdj6kOZ9Dq"
     }
 
     @GET("locations/v1/cities/geoposition/search")
